@@ -1,0 +1,12 @@
+*.swp 
+deps/ 
+ebin 
+transceiver.d 
+erl_crash.dump 
+.erlang.mk/ 
+log/
+logs/
+*.beam
+ct_log/
+
+
