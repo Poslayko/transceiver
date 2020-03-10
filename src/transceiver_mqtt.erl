@@ -37,7 +37,9 @@ handle_cast(_Request, State) ->
 
 handle_info(first_subscribe, _State) ->
     {ok, TopicSubRegister} = ?TOPIC_SUB_REGISTER,
-    NewState = [subscribe_mqtt(TopicSubRegister)],
+    {ok, TopicSubEvent} = ?TOPIC_SUB_EVENT,
+    Topics = [TopicSubRegister, TopicSubEvent],
+    NewState = subscribe_mqtt(Topics),
     {noreply, NewState};
 handle_info({publish, MsgMap}, State) ->
     Payload = maps:get(payload, MsgMap),
@@ -52,9 +54,11 @@ handle_info(Info, State) ->
 
     {noreply, State}.
 
-subscribe_mqtt(TopicSub) ->
+subscribe_mqtt(Topics) ->
+    [TopicRegister, TopicEvent] = Topics,
     {ok, StartOptions} = ?START_OPT_MQTT,
     {ok, ConnPid} = emqtt:start_link(StartOptions),
     {ok, _Props} = emqtt:connect(ConnPid),
     {ok, QoS} = ?QOS,
-    {ok, _Props, _ReasonCodes} = emqtt:subscribe(ConnPid, {TopicSub, QoS}).
+    {ok, _Props, _ReasonCodes} = emqtt:subscribe(ConnPid, {TopicRegister, QoS}),
+    {ok, _Props2, _ReasonCodes2} = emqtt:subscribe(ConnPid, {TopicEvent, QoS}).
