@@ -4,6 +4,7 @@
 
 %API
 -export([start_link/1]).
+-export([send_message_mqtt/1]).
 
 %gen_server
 -export([init/1]).
@@ -20,6 +21,10 @@
 start_link(Args) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, Args, []).
 
+send_message_mqtt(Msg) ->
+    ok = gen_server:cast(?MODULE, Msg),
+    ok.
+
 init(_) ->
     State = self(),
     self() ! first_subscribe,
@@ -33,6 +38,12 @@ handle_call(Request, From, State) ->
 
     {reply, reply, State}.
 
+handle_cast({send_msg_mqtt, Topic, Msg}, State) ->
+    ConnPid = maps:get(conn_pid, State),
+    TermMsg = term_to_binary(Msg),
+    {ok, QoS} = ?QOS,
+    ok = emqtt:publish(ConnPid, Topic, TermMsg, [QoS, {retain, true}]),
+    {noreply, State};
 handle_cast(_Request, State) ->
     {noreply, State}.
 
@@ -65,4 +76,5 @@ subscribe_mqtt(Topics) ->
     {ok, QoS} = ?QOS,
     {ok, _Props, _ReasonCodes} = emqtt:subscribe(ConnPid, {TopicRegister, QoS}),
     {ok, _Props2, _ReasonCodes2} = emqtt:subscribe(ConnPid, {TopicEvent, QoS}),
-    {ok, _Props3, _ReasonCodes3} = emqtt:subscribe(ConnPid, {TopicCon, QoS}).
+    {ok, _Props3, _ReasonCodes3} = emqtt:subscribe(ConnPid, {TopicCon, QoS}),
+    #{conn_pid => ConnPid}.
