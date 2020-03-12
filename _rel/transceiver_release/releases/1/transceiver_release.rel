@@ -1,0 +1,8 @@
+{release,{"transceiver_release","1"},
+         {erts,"10.6.4"},
+         [{kernel,"6.5.1"},
+          {stdlib,"3.11.2"},
+          {emqtt,"git"},
+          {transceiver,"0.1.0"},
+          {sasl,"3.4.1"},
+          {runtime_tools,"1.14"}]}. 

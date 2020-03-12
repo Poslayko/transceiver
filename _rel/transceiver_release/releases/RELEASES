@@ -1,0 +1,9 @@
+%% coding: utf-8
+[{release,"transceiver_release","1","10.6.4",
+          [{kernel,"6.5.1","./lib/kernel-6.5.1"},
+           {stdlib,"3.11.2","./lib/stdlib-3.11.2"},
+           {emqtt,"git","./lib/emqtt-git"},
+           {transceiver,"0.1.0","./lib/transceiver-0.1.0"},
+           {sasl,"3.4.1","./lib/sasl-3.4.1"},
+           {runtime_tools,"1.14","./lib/runtime_tools-1.14"}],
+          permanent}].
