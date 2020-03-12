@@ -5,6 +5,8 @@
 %API
 -export([start_link/1]).
 -export([send_message_mqtt/1]).
+-export([pipeline_online/0]).
+-export([pipeline_offline/0]).
 
 %gen_server
 -export([init/1]).
@@ -24,6 +26,12 @@ start_link(Args) ->
 send_message_mqtt(Msg) ->
     ok = gen_server:cast(?MODULE, Msg),
     ok.
+
+pipeline_online() ->
+    send_message_mqtt({send_msg_mqtt, <<"connection/pipeline">>, <<"online">>}).
+
+pipeline_offline() ->
+    send_message_mqtt({send_msg_mqtt, <<"connection/pipeline">>, <<"offline">>}).
 
 init(_) ->
     State = self(),
