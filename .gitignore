@@ -8,5 +8,4 @@ log/
 logs/
 *.beam
 ct_log/
-
-
+_rel/
