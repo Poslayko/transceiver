@@ -52,6 +52,12 @@ handle_cast({send_msg_mqtt, Topic, Msg}, State) ->
     {ok, QoS} = ?QOS,
     ok = emqtt:publish(ConnPid, Topic, TermMsg, [QoS, {retain, true}]),
     {noreply, State};
+handle_cast({send_msg, Topic, Msg}, State) ->
+    ConnPid = maps:get(conn_pid, State),
+    TermMsg = term_to_binary(Msg),
+    {ok, QoS} = ?QOS,
+    {ok, _Pr} = emqtt:publish(ConnPid, Topic, TermMsg, QoS),
+    {noreply, State};
 handle_cast(_Request, State) ->
     {noreply, State}.
 
