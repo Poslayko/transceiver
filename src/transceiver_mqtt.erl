@@ -7,6 +7,7 @@
 -export([send_message_mqtt/1]).
 -export([pipeline_online/0]).
 -export([pipeline_offline/0]).
+-export([send_msg/2]).
 
 %gen_server
 -export([init/1]).
@@ -22,6 +23,9 @@
 
 start_link(Args) ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, Args, []).
+
+send_msg(Topic, DataMsg) ->
+    send_message_mqtt({send_msg, Topic, DataMsg}).
 
 send_message_mqtt(Msg) ->
     ok = gen_server:cast(?MODULE, Msg),
@@ -73,7 +77,22 @@ handle_info({publish, MsgMap}, State) ->
     MsgTerm = binary_to_term(Payload),
 
     ok = io:format("~n~nMsgMap: ~p~n", [MsgMap]),
-    ok = io:format("~nMsgTerm: ~p~n~n", [MsgTerm]),
+    ok = io:format("~nMsgTerm: ~p~n", [MsgTerm]),
+
+    MainResponse = case is_map(MsgTerm) of
+        true ->
+            Msg = maps:get(event_data, MsgTerm),
+            case Msg of
+                {ok, {_, _, ResponseBin}} ->
+                    jsx:decode(ResponseBin);
+                Msg ->
+                    Msg
+            end;
+        false ->
+            MsgTerm
+    end,
+
+    ok = io:format("~nMainResponse: ~p~n~n", [MainResponse]),
 
     {noreply, State};
 handle_info(Info, State) ->
