@@ -1,7 +1,7 @@
 
 ##How to send message with emqttd
 
-Token = "uW9MmaecA2_GMhZxTtiraCPFhckSEKXMtGzVFocgYSFQ",
+Token = "any_token",
 BindId = <<"abcdef">>,
 Parameters = #{token => Token, bind_id => BindId},
 MethodName = <<"get_personal_client_info">>,
