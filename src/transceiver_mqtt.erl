@@ -75,24 +75,31 @@ handle_info(first_subscribe, _State) ->
 handle_info({publish, MsgMap}, State) ->
     Payload = maps:get(payload, MsgMap),
     MsgTerm = binary_to_term(Payload),
+    Topic = maps:get(topic, MsgMap),
 
     ok = io:format("~n~nMsgMap: ~p~n", [MsgMap]),
-    ok = io:format("~nMsgTerm: ~p~n", [MsgTerm]),
+    ok = io:format("~nMsgTerm: ~p~n~n", [MsgTerm]),
 
     MainResponse = case is_map(MsgTerm) of
         true ->
-            Msg = maps:get(event_data, MsgTerm),
-            case Msg of
-                {ok, {_, _, ResponseBin}} ->
-                    jsx:decode(ResponseBin);
-                Msg ->
-                    Msg
+            case maps:is_key(event_data, MsgTerm) of
+                true ->
+                    Msg = maps:get(event_data, MsgTerm),
+                    case Msg of
+                        {ok, {_, _, ResponseBin}} ->
+                            jsx:decode(ResponseBin);
+                        Msg ->
+                            Msg
+                    end;
+                false ->
+                    MsgTerm
             end;
         false ->
             MsgTerm
     end,
 
-    ok = io:format("~nMainResponse: ~p~n~n", [MainResponse]),
+    ok = io:format("Topic: ~p~n", [Topic]),
+    ok = io:format("MainResponse: ~p~n", [MainResponse]),
 
     {noreply, State};
 handle_info(Info, State) ->
