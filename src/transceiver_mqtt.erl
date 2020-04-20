@@ -18,6 +18,7 @@
 -define(TOPIC_SUB_REGISTER, application:get_env(transceiver, topic_sub_register)).
 -define(TOPIC_SUB_EVENT, application:get_env(transceiver, topic_sub_event)).
 -define(TOPIC_SUB_CON, application:get_env(transceiver, topic_sub_con)).
+-define(TOPIC_SUB_RES, application:get_env(transceiver, topic_sub_res)).
 -define(START_OPT_MQTT, application:get_env(transceiver, start_options_mqtt)).
 -define(QOS, application:get_env(transceiver, qos)).
 
@@ -69,7 +70,8 @@ handle_info(first_subscribe, _State) ->
     {ok, TopicSubRegister} = ?TOPIC_SUB_REGISTER,
     {ok, TopicSubEvent} = ?TOPIC_SUB_EVENT,
     {ok, TopicSubCon} = ?TOPIC_SUB_CON,
-    Topics = [TopicSubRegister, TopicSubEvent, TopicSubCon],
+    {ok, TopicSubRes} = ?TOPIC_SUB_RES,
+    Topics = [TopicSubRegister, TopicSubEvent, TopicSubCon, TopicSubRes],
     NewState = subscribe_mqtt(Topics),
     {noreply, NewState};
 handle_info({publish, MsgMap}, State) ->
@@ -109,7 +111,7 @@ handle_info(Info, State) ->
     {noreply, State}.
 
 subscribe_mqtt(Topics) ->
-    [TopicRegister, TopicEvent, TopicCon] = Topics,
+    [TopicRegister, TopicEvent, TopicCon, TopicRes] = Topics,
     {ok, StartOptions} = ?START_OPT_MQTT,
     {ok, ConnPid} = emqtt:start_link(StartOptions),
     {ok, _Props} = emqtt:connect(ConnPid),
@@ -117,4 +119,5 @@ subscribe_mqtt(Topics) ->
     {ok, _Props, _ReasonCodes} = emqtt:subscribe(ConnPid, {TopicRegister, QoS}),
     {ok, _Props2, _ReasonCodes2} = emqtt:subscribe(ConnPid, {TopicEvent, QoS}),
     {ok, _Props3, _ReasonCodes3} = emqtt:subscribe(ConnPid, {TopicCon, QoS}),
+    {ok, _Props4, _ReasonCodes4} = emqtt:subscribe(ConnPid, {TopicRes, QoS}),
     #{conn_pid => ConnPid}.
