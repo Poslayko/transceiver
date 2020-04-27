@@ -84,9 +84,9 @@ handle_info({publish, MsgMap}, State) ->
 
     MainResponse = case is_map(MsgTerm) of
         true ->
-            case maps:is_key(response_data, MsgTerm) of
+            case maps:is_key(response, MsgTerm) of
                 true ->
-                    Msg = maps:get(response_data, MsgTerm),
+                    Msg = maps:get(response, MsgTerm),
                     case Msg of
                         {ok, {_, _, ResponseBin}} ->
                             jsx:decode(ResponseBin);
