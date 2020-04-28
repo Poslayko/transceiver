@@ -94,7 +94,35 @@ handle_info({publish, MsgMap}, State) ->
                             Msg
                     end;
                 false ->
-                    MsgTerm
+                    case maps:is_key(event_data, MsgTerm) of
+                        true ->
+                            Msg = maps:get(event_data, MsgTerm),
+                            case maps:is_key(set_webhook, Msg) of
+                                true ->
+                                    [_, {_, HubChallenge}, _] = maps:get(set_webhook, Msg),
+                                    Challenge = binary_to_integer(HubChallenge),
+                                    Pid = maps:get(pid, Msg),
+                                    Parameters = #{
+                                        request_id => <<"123456">>,
+                                        bind_id => <<"abcdef">>,
+                                        pid => Pid,
+                                        msg => {set_webhook, Challenge}
+                                    },
+                                    Data = #{
+                                        method_name => <<"send_answer_to_fb">>,
+                                        parameters => Parameters
+                                    },
+                                    DataETF = term_to_binary(Data),
+                                    ConnPid = maps:get(conn_pid, State),
+                                    [_, ResponseTopic] = binary:split(Topic, <<"/">>),
+                                    {ok, _} = emqtt:publish(ConnPid, ResponseTopic, DataETF, 2),
+                                    Msg;
+                                false ->
+                                    Msg
+                            end;
+                        false ->
+                            MsgTerm
+                    end
             end;
         false ->
             MsgTerm
