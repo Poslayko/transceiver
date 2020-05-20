@@ -79,10 +79,11 @@ handle_info({publish, MsgMap}, State) ->
     MsgTerm = binary_to_term(Payload),
     Topic = maps:get(topic, MsgMap),
 
-    ok = io:format("~n~nMsgMap: ~p~n", [MsgMap]),
-    ok = io:format("~nMsgTerm: ~p~n~n", [MsgTerm]),
+%%    ok = io:format("~n~nMsgMap: ~p~n", [MsgMap]),
+    ok = io:format("~nTopic: ~p~n", [Topic]),
+    ok = io:format("MsgTerm: ~p~n~n", [MsgTerm]),
 
-    MainResponse = case is_map(MsgTerm) of
+    _MainResponse = case is_map(MsgTerm) of
         true ->
             case maps:is_key(<<"response">>, MsgTerm) of
                 true ->
@@ -129,8 +130,7 @@ handle_info({publish, MsgMap}, State) ->
             MsgTerm
     end,
 
-    ok = io:format("Topic: ~p~n", [Topic]),
-    ok = io:format("MainResponse: ~p~n", [MainResponse]),
+    %%    ok = io:format("MainResponse: ~p~n", [MainResponse]),
 
     {noreply, State};
 handle_info(Info, State) ->
