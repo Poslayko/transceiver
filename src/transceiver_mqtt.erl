@@ -103,15 +103,15 @@ handle_info({publish, MsgMap}, State) ->
                                     [_, {_, HubChallenge}, _] = maps:get(<<"set_webhook">>, Msg),
                                     Challenge = binary_to_integer(HubChallenge),
                                     Pid = maps:get(<<"pid">>, Msg),
-                                    Parameters = #{
-                                        <<"request_id">> => <<"123456">>,
-                                        <<"bind_id">> => <<"abcdef">>,
+                                    MethodParams = #{
                                         <<"pid">> => Pid,
                                         <<"msg">> => {<<"set_webhook">>, Challenge}
                                     },
                                     Data = #{
+                                        <<"request_id">> => <<"123456">>,
+                                        <<"bind_id">> => <<"abcdef">>,
                                         <<"method_name">> => <<"send_answer_to_fb">>,
-                                        <<"parameters">> => Parameters
+                                        <<"method_params">> => MethodParams
                                     },
                                     DataETF = term_to_binary(Data),
                                     ConnPid = maps:get(conn_pid, State),
