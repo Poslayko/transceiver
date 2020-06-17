@@ -5,8 +5,8 @@
 %API
 -export([start_link/1]).
 -export([send_message_mqtt/1]).
--export([pipeline_online/0]).
--export([pipeline_offline/0]).
+-export([digital_bpm_online/0]).
+-export([digital_bpm_offline/0]).
 -export([send_msg/2]).
 
 %gen_server
@@ -32,11 +32,11 @@ send_message_mqtt(Msg) ->
     ok = gen_server:cast(?MODULE, Msg),
     ok.
 
-pipeline_online() ->
-    send_message_mqtt({send_msg_mqtt, <<"connection/pipeline">>, <<"online">>}).
+digital_bpm_online() ->
+    send_message_mqtt({send_msg_mqtt, <<"connection/digital_bpm">>, <<"online">>}).
 
-pipeline_offline() ->
-    send_message_mqtt({send_msg_mqtt, <<"connection/pipeline">>, <<"offline">>}).
+digital_bpm_offline() ->
+    send_message_mqtt({send_msg_mqtt, <<"connection/digital_bpm">>, <<"offline">>}).
 
 init(_) ->
     State = self(),
