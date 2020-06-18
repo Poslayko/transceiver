@@ -81,7 +81,7 @@ handle_info({publish, MsgMap}, State) ->
 
 %%    ok = io:format("~n~nMsgMap: ~p~n", [MsgMap]),
     ok = io:format("~nTopic: ~p~n", [Topic]),
-    ok = io:format("MsgTerm: ~p~n~n", [MsgTerm]),
+    ok = io:format("MsgTerm: ~n~p~n~n", [MsgTerm]),
 
     _MainResponse = case is_map(MsgTerm) of
         true ->
