@@ -44,11 +44,7 @@ init(_) ->
     {ok, State}.
 
 handle_call(Request, From, State) ->
-
-    ok = io:format("~nRequest: ~p~nFrom: ~p~nSate: ~p~n~n",
-        [Request, From, State]
-    ),
-
+    ok = io:format("~nRequest: ~p~nFrom: ~p~nSate: ~p~n~n", [Request, From, State]),
     {reply, reply, State}.
 
 handle_cast({send_msg_mqtt, Topic, Msg}, State) ->
